@@ -212,6 +212,4 @@ user_data.json
 *.json
 
 # 忽略偵錯產生的圖片
-debug_*.png
-*.png
 uploads/
