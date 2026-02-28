@@ -1,0 +1,632 @@
+[
+    {
+        "start_timestamp": "2026-01-14 17:19:12",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-14 17:20:05",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-14 17:46:57",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "2.不是",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-14 17:47:36",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-14 18:48:11",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-14 18:48:39",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "2.不是",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-14 18:49:07",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyecheck_diabetic": "2.不是",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-14 18:50:50",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyecheck_diabetic": "2.不是",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-14 18:51:24",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-15 14:07:23",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "2.不是",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-15 14:08:59",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyecheck_diabetic": "2.不是",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-16 15:36:57",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-16 15:51:57",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-22 13:53:44",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-22 13:54:57",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-22 13:55:56",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-22 14:52:45",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-22 14:54:04",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-22 14:58:50",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-22 14:59:57",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-22 18:29:52",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-22 18:30:56",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyecheck_diabetic": "1.是的",
+        "eyeproblem_nondiabetic": "null"
+    },
+    {
+        "start_timestamp": "2026-01-24 13:35:34",
+        "user": "嶽鵬",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-24 13:41:19",
+        "user": "",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-01-24 13:42:31",
+        "user": "",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "2.不是"
+    },
+    {
+        "start_timestamp": "2026-01-24 13:43:25",
+        "user": "",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-24 13:52:16",
+        "user": "",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-01-26 05:05:11",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-26 06:41:19",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-01-26 06:53:15",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "2.不是"
+    },
+    {
+        "start_timestamp": "2026-01-26 06:54:26",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-26 10:00:27",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-26 15:36:01",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800062",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-26 19:51:20",
+        "user": "蕭琦峰",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-26 20:03:24",
+        "user": "蕭琦峰",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-01-26 20:19:43",
+        "user": "蕭風風",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-01-27 13:22:09",
+        "user": "aaa",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-01-27 13:34:03",
+        "user": "aaa",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-01-27 17:58:36",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-01-27 18:02:45",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "2.不是"
+    },
+    {
+        "start_timestamp": "2026-01-28 00:45:08",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-01-29 16:43:42",
+        "user": "岱蓉",
+        "machine_ID_1": "10390NNNB3252600055",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-29 16:43:43",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "2.不是",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-01-30 22:35:12",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-30 22:37:06",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-30 22:41:25",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-02 10:13:47",
+        "user": "蕭蕭",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-02-02 10:18:22",
+        "user": "ghh",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-02-02 11:48:20",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "2.不是"
+    },
+    {
+        "start_timestamp": "2026-02-02 11:51:39",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-02 11:56:33",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-02 12:16:50",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-02 12:17:15",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-02-05 09:05:11",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-08 17:26:09",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-09 13:46:29",
+        "user": "岱蓉",
+        "machine_ID_1": "10390NNNB3252600054",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-02-10 14:22:35",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800068",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-11 15:24:01",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800082",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-11 18:03:06",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "2.不是"
+    },
+    {
+        "start_timestamp": "2026-02-11 18:20:25",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-02-11 22:27:32",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-02-11 23:56:50",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-02-12 01:08:44",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "2.沒有"
+    },
+    {
+        "start_timestamp": "2026-02-12 01:09:22",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-12 01:12:10",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "2.不是"
+    },
+    {
+        "start_timestamp": "2026-02-12 01:12:44",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-12 01:15:55",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-12 01:16:44",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-12 08:43:13",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800082",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-12 08:56:09",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800082",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-12 09:19:15",
+        "user": "孫美慧",
+        "machine_ID_1": "10390LTNB2253800082",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-12 12:56:12",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800096",
+        "Questionnaire_type": "2",
+        "diabetes": "2.沒有",
+        "eyeproblem_nondiabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-13 00:31:52",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-02-13 00:32:15",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-14 16:24:59",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "diabetes": "1.是的",
+        "eyecheck_diabetic": "2.不是"
+    },
+    {
+        "start_timestamp": "2026-02-14 16:25:24",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "2",
+        "near_distance": "通過",
+        "far_distance": "不通過"
+    }
+]

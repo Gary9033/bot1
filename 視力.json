@@ -1,0 +1,208 @@
+[
+    {
+        "start_timestamp": "2026-01-31 02:25:11",
+        "user": "志謙",
+        "machine_ID_1": "10390NNNB2244300122",
+        "id_num": "what",
+        "Questionnaire_type": "7",
+        "near_distance": "1.滿意",
+        "far_distance": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-31 02:25:19",
+        "user": "志謙",
+        "machine_ID_1": "10390NNNB2244300122",
+        "id_num": "what",
+        "Questionnaire_type": "7",
+        "near_distance": "通過",
+        "far_distance": "1.是的"
+    },
+    {
+        "start_timestamp": "2026-01-31 02:25:27",
+        "user": "志謙",
+        "machine_ID_1": "10390NNNB2244300122",
+        "id_num": "what",
+        "Questionnaire_type": "7",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-01-31 02:27:33",
+        "user": "志謙",
+        "machine_ID_1": "10390NNNB2244300122",
+        "id_num": "what",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-02 10:30:16",
+        "user": "",
+        "machine_ID_1": "10390NNNB2244300189",
+        "Questionnaire_type": "6",
+        "near_distance": "不通過",
+        "far_distance": "不通過"
+    },
+    {
+        "start_timestamp": "2026-02-02 11:49:06",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "不通過"
+    },
+    {
+        "start_timestamp": "2026-02-02 11:52:24",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "6",
+        "near_distance": "不通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-02 11:53:47",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "6",
+        "near_distance": "不通過",
+        "far_distance": "不通過"
+    },
+    {
+        "start_timestamp": "2026-02-02 11:57:19",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "不通過"
+    },
+    {
+        "start_timestamp": "2026-02-02 12:01:29",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "不通過"
+    },
+    {
+        "start_timestamp": "2026-02-02 12:02:19",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "6",
+        "near_distance": "不通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-02 15:50:54",
+        "user": "志謙",
+        "machine_ID_1": "10390NNNB2244300122",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-02 16:47:21",
+        "user": "志謙",
+        "machine_ID_1": "10390NNNB2244300122",
+        "id_num": "what",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-02 16:47:49",
+        "user": "志謙",
+        "machine_ID_1": "10390NNNB2244300122",
+        "id_num": "what",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-05 09:06:52",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-05 11:35:19",
+        "user": "岱蓉",
+        "machine_ID_1": "10390NNNB3252600055",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-06 16:13:48",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800001",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "不通過"
+    },
+    {
+        "start_timestamp": "2026-02-09 11:59:42",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800054",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "不通過"
+    },
+    {
+        "start_timestamp": "2026-02-09 13:47:53",
+        "user": "岱蓉",
+        "machine_ID_1": "10390NNNB3252600054",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-11 22:28:42",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-11 23:57:35",
+        "user": "岱蓉",
+        "machine_ID_1": "10390LTNB2253800036",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-12 08:43:00",
+        "user": "",
+        "machine_ID_1": "10390LTNB2253800082",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "不通過"
+    },
+    {
+        "start_timestamp": "2026-02-12 09:20:52",
+        "user": "孫美慧",
+        "machine_ID_1": "10390LTNB2253800082",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-12 11:45:56",
+        "user": "伍妹",
+        "machine_ID_1": "10390NNNB3252600053",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "通過"
+    },
+    {
+        "start_timestamp": "2026-02-23 16:41:04",
+        "user": "莉莉",
+        "machine_ID_1": "10390NNNB3252600015",
+        "Questionnaire_type": "6",
+        "near_distance": "通過",
+        "far_distance": "不通過"
+    }
+]
