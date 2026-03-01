@@ -1,0 +1,15 @@
+version: "3.8"   # 指定 Docker Compose 使用的語法版本（3.8 是普遍相容的版本）
+
+services:        # 定義要啟動的所有服務（容器）
+  nuwa_robot_service:   # 服務名稱，可自訂
+    build: .            # 使用目前資料夾（含 Dockerfile）來建置 image，而不是用遠端 image
+    image: nuwa_robot   # 建置完成後的鏡像名稱（老師看到的 image 名字）
+    container_name: nuwa_robot_container   # 指定容器啟動後的名稱，方便管理
+    ports:
+      - "5000:5000"     # 本機 5000 port 映射到容器內的 5000 port（通常 Flask 預設 5000）
+    volumes:
+        - ./uploads:/app/uploads   # 將本機 uploads 資料夾掛載到容器的 /app/uploads（用來存檔案）
+        - ./user_data.json:/app/user_data.json # 掛載 user_data.json 以便資料持久化
+        - ./result:/app/result     # 掛載 result 資料夾以便圖像結果持久化
+    restart: unless-stopped      # 若服務異常中止會自動重啟（除非你手動停止）
+
