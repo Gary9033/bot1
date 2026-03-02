@@ -210,6 +210,6 @@ __marimo__/
 pic.json
 user_data.json
 *.json
-
+*.http
 # 忽略偵錯產生的圖片
 uploads/
