@@ -213,3 +213,4 @@ user_data.json
 *.http
 # 忽略偵錯產生的圖片
 uploads/
+result/

@@ -1,9 +1,11 @@
+
 # 1. 改用完整版 Image (雖然大一點，但能解決 99% 的 MediaPipe 環境問題)
 FROM python:3.11-bookworm
 
 WORKDIR /app
 
 # 2. 安裝所有 MediaPipe 與 OpenCV 運作所需的底層庫
+
 RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     libgl1 \
