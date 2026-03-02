@@ -1,5 +1,14 @@
+<<<<<<< HEAD
 flask
 opencv-python-headless
 numpy
 mediapipe
 Pillow
+=======
+flask>=2.3.0,<4.0.0
+opencv-python-headless==4.8.1.78
+# 強制使用 1.26.x，因為 2.x 會讓 mediapipe 崩潰
+numpy==1.26.4
+mediapipe==0.10.11
+Pillow>=10.0.0,<12.0.0
+>>>>>>> 0aa2f564429c0d0e6752d5cb11301d0b81e39e71
