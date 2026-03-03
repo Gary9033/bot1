@@ -640,7 +640,7 @@ def home():
                 if all_data:
                     found_user = None
                     for entry in all_data:
-                        if entry.get("id_number") == id_num:
+                        if entry.get("id_num") == id_num:
                             found_user = entry
                             break  # 找到就跳出迴圈
                     if found_user:
