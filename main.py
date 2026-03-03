@@ -456,7 +456,7 @@ def questionnaire(data):
                 elif summation >=10:
                     string ="行動能力正常"
                     print("行動能力正常")
-            
+        
         ##存檔
         SAVE_FILE = questionnaire_type + ".json"  
         if os.path.exists(SAVE_FILE):
@@ -472,6 +472,7 @@ def questionnaire(data):
         all_data.append(data)
         with open(SAVE_FILE, "w", encoding="utf-8") as f:
             json.dump(all_data, f, ensure_ascii=False, indent=4)
+
         return jsonify({
             "level":string,
             "score": summation,
@@ -607,6 +608,70 @@ def home():
             except (ValueError, TypeError):
                 return jsonify({"error": "Invalid weight value"}), 400
         return jsonify({"bmi": bmi})
+    elif 'survey_type'in data:
+        survey_type = data.get('survey_type')
+        id_num = data.get('id_num')
+        new_time = data["start_timestamp"]
+       
+        if survey_type:
+            try:
+                match survey_type:
+                    case 'support': 
+                        SAVE_FILE = "支持評估問卷.json"
+                    case 'cognition': 
+                        SAVE_FILE = "認知功能問卷.json"
+                    case 'emotion': 
+                        SAVE_FILE = "抑鬱情緒問卷.json"
+                    case 'vision': 
+                        SAVE_FILE = "視力健康問卷.json"
+                    case 'nutrition': 
+                        SAVE_FILE = "營養問卷.json"
+                        
+                if os.path.exists(SAVE_FILE):
+                    with open(SAVE_FILE, "r", encoding="utf-8") as f:
+                        try:
+                            all_data = json.load(f)
+                            if not isinstance(all_data, list):
+                                all_data = [all_data]  # 如果原本不是 list，就轉成 list
+                        except json.JSONDecodeError:
+                            all_data = []
+                else:
+                    all_data = []
+                if all_data:
+                    found_user = None
+                    for entry in all_data:
+                        if entry.get("id_number") == id_num:
+                            found_user = entry
+                            break  # 找到就跳出迴圈
+                    if found_user:
+                        previous_time = found_user["start_timestamp"]
+                        print(f"搜尋成功！資料如下：\n{previous_time}")
+                        dt_obj = datetime.datetime.strptime(previous_time, "%Y-%m-%d %H:%M:%S")        
+                        # 2. 轉換為 Linux 時間 (Timestamp)
+                        prev_ts = int(dt_obj.timestamp())
+                        dt_new = datetime.datetime.strptime(new_time, "%Y-%m-%d %H:%M:%S")      
+                        new_ts = int(dt_new.timestamp())
+                        # --- 計算差值 ---
+                        time_diff = new_ts - prev_ts
+                        print(f"相差秒數: {time_diff}")
+                        HALF_YEAR_SECONDS = 180 * 24 * 60 * 60 #半年(s)
+                        if time_diff < HALF_YEAR_SECONDS:
+                            print("距離上次測驗小於半年！")
+                            return jsonify({"support_check": 1})
+                        else:
+                            print("已經超過半年了，可以繼續。")
+                            return jsonify({"support_check": 0}) 
+                    else:
+                        print("在資料庫中找不到該身分證字號")   
+                        return jsonify({"support_check": 0}) 
+                else:
+                    print("沒有json檔")   
+                    return jsonify({"support_check": 0})
+                
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid survey_type value"}), 400
+        else:
+            return jsonify({"error": "Invalid survey_type value"}), 400
     else:
         return jsonify({"error": "Invalid request"}), 400
 
