@@ -657,16 +657,16 @@ def home():
                         HALF_YEAR_SECONDS = 180 * 24 * 60 * 60 #半年(s)
                         if time_diff < HALF_YEAR_SECONDS:
                             print("距離上次測驗小於半年！")
-                            return jsonify({"support_check": 1})
+                            return jsonify({"check": 1})
                         else:
                             print("已經超過半年了，可以繼續。")
-                            return jsonify({"support_check": 0}) 
+                            return jsonify({"check": 0}) 
                     else:
                         print("在資料庫中找不到該身分證字號")   
-                        return jsonify({"support_check": 0}) 
+                        return jsonify({"check": 0}) 
                 else:
                     print("沒有json檔")   
-                    return jsonify({"support_check": 0})
+                    return jsonify({"check": 0})
                 
             except (ValueError, TypeError):
                 return jsonify({"error": "Invalid survey_type value"}), 400
