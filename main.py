@@ -722,8 +722,7 @@ def questionnaire_all(data):
     for k in vision_keys:
         val = data.get(k, "")
         if val == "":
-            score["視力問卷"] = -1
-            break
+           continue
         if str(val)[0] == "1":
             score["視力問卷"] += 1
 
@@ -759,7 +758,7 @@ def questionnaire_all(data):
         "weight_change": {"1": 0, "2": 1, "3": 2, "4": 3},
         "mobility": {"1": 0, "2": 1, "3": 2},
         "stress_health": {"1": 0, "2": 2},
-        "mood_memory": {"1": 1, "2": 2},
+        "mood_memory": {"1": 1, "2": 2}
     }
     bmi = data.get("bmi", "")
     if not bmi:
@@ -916,8 +915,8 @@ def show_image():
         if score["認知"] == -1:
             coords.append((認知_xy["x"], 認知_xy["y1"]))  # 起點
         else:
-            key, p = calculate_generic(score["認知"], 認知_rise)
-            y = 認知_xy["y1"] if key=="interval_notice" else int(認知_xy["y2"] - (150*(1+p) if key=="interval_good" else 150*p))
+            key, p = calculate_generic(score["認知"], 認知_rise)        
+            y = 認知_xy["y1"] if key=="interval_notice" else int(認知_xy["y2"] - (150*(2+p) if key=="interval_good" else 150*p))
             coords.append((認知_xy["x"], y))
             coords.append((認知_xy["x"], 認知_xy["y1"]))  # 起點
 
