@@ -517,7 +517,8 @@ def home():
         json.dump(all_data, f, ensure_ascii=False, indent=4)
 
     if 'pic1' in data:
-        return height(data)
+        # return height(data)
+        return cal_height_v2() #目前用方法3(紙張)
     if 'pic2' in data:
         return height_new(data)
     elif 'temp' in data:
