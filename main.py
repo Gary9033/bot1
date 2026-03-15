@@ -1493,14 +1493,16 @@ def detect_and_crop_both_feet_v2(file_path, padding_ratio=None, save_output=True
     
     img_bgr = img_cv.copy()
     
-    cv2.circle(img_bgr, left_foot_px, 5, (255, 0, 255), -1)
-    cv2.circle(img_bgr, right_foot_px, 5, (255, 0, 255), -1)
-    cv2.circle(img_bgr, left_heel_px, 5, (0, 255, 255), -1)
-    cv2.circle(img_bgr, right_heel_px, 5, (0, 255, 255), -1)
-    cv2.circle(img_bgr, left_ankle_px, 5, (0, 255, 0), -1)
-    cv2.circle(img_bgr, right_ankle_px, 5, (0, 255, 0), -1)
+    cv2.circle(img_bgr, left_foot_px, 3, (255, 0, 255), -1)
+    cv2.circle(img_bgr, right_foot_px, 3, (255, 0, 255), -1)
+    cv2.circle(img_bgr, left_heel_px, 3, (0, 255, 255), -1)
+    cv2.circle(img_bgr, right_heel_px, 3, (0, 255, 255), -1)
+    cv2.circle(img_bgr, left_ankle_px, 3, (0, 255, 0), -1)
+    cv2.circle(img_bgr, right_ankle_px, 3, (0, 255, 0), -1)
     right_foot_crop_x = right_foot_px[0] - min_x
     right_foot_crop_y = right_foot_px[1] - min_y
+    left_foot_crop_x = left_foot_px[0] - min_x
+    left_foot_crop_y = left_foot_px[1] - min_y
     feet_crop = img_bgr[min_y:max_y, min_x:max_x]
     
     if save_output:
@@ -1510,6 +1512,7 @@ def detect_and_crop_both_feet_v2(file_path, padding_ratio=None, save_output=True
     
     result = {
         'right_foot_toe': right_foot_crop_y,
+        'left_foot_toe': left_foot_crop_y,
         'feet_width': feet_width,
         'feet_width_ratio': feet_width_ratio,
         'padding_used': padding
@@ -1517,7 +1520,7 @@ def detect_and_crop_both_feet_v2(file_path, padding_ratio=None, save_output=True
     
     return result
 
-def texture_v2(right_foot, crop_image_path='both_feet_crop.png'):
+def texture_v2(right_foot, crop_image_path='both_feet_crop.png'): 
     """測量紙張距離並儲存各階段處理結果"""
     print("❗是沒有膨脹和侵蝕的版本")
     image = cv2.imread(crop_image_path)
@@ -1532,79 +1535,41 @@ def texture_v2(right_foot, crop_image_path='both_feet_crop.png'):
     # 2. 二值化
     _, binary = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY)
     cv2.imwrite('debug_step1_binary_fail.png', binary)
-    # 3. 尋找並篩選最大輪廓 (只保留最大的白色區塊)
+    # 3. 尋找並篩選最大輪廓 (只保留最大的黑色區塊)
     contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
-        print("❌ 找不到白色參考物")
+        print("❌ 找不到黑色參考物")
         # 即使失敗也存一張二值化圖，方便 debug 為什麼找不到
         cv2.imwrite('debug_step1_binary_fail.png', binary)
         return 0
     
-    # 🔧 3. 在 right_foot_y 這一行的 X方向找白色連續長度
+    # 🔧 3. 在 right_foot_y 這一行的 X方向找黑色連續長度
     row = binary[right_foot_y, :]  # 取出這一整行的像素（1D array）
-    white_indices = np.where(row == 255)[0]  # 找所有白色像素的X座標
+    black_indices = np.where(row == 0)[0]  # 找所有黑色像素的X座標
     
-    if len(white_indices) == 0:
-        print(f"❌ Y={right_foot_y} 這行沒有白色像素")
+    if len(black_indices) == 0:
+        print(f"❌ Y={right_foot_y} 這行沒有黑色像素")
         return 0
     
-    # 找連續白色區段（假設只有一個主要紙張）
-    left_x = np.min(white_indices)
-    right_x = np.max(white_indices)
+    # 找連續黑色區段（假設只有一個主要紙張）
+    left_x = np.min(black_indices)
+    right_x = np.max(black_indices)
     paper_width = right_x - left_x + 1  # 包含左右端點
     
-    print(f"📏 Y={right_foot_y} 行白色連續長度: {paper_width} 像素")
+    print(f"📏 Y={right_foot_y} 行黑色連續長度: {paper_width} 像素")
     print(f"   範圍: X={left_x} 到 X={right_x}")
     
     # 可視化：在原圖標註
     debug_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     cv2.line(debug_img, (left_x, right_foot_y), (right_x, right_foot_y), (0, 255, 0), 3)
-    cv2.circle(debug_img, (left_x, right_foot_y), 8, (0, 0, 255), -1)
-    cv2.circle(debug_img, (right_x, right_foot_y), 8, (255, 0, 0), -1)
+    cv2.circle(debug_img, (left_x, right_foot_y), 3, (0, 0, 255), -1)
+    cv2.circle(debug_img, (right_x, right_foot_y), 3, (255, 0, 0), -1)
     cv2.putText(debug_img, f"Width: {paper_width}px", (10, 30), 
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     
     cv2.imwrite('debug_paper_width.png', cv2.cvtColor(debug_img, cv2.COLOR_RGB2BGR))
     print("✅ 測量結果已儲存: debug_paper_width.png")
     dist = paper_width
-
-    # max_contour = max(contours, key=cv2.contourArea)
-    # mask = np.zeros_like(binary)
-    # cv2.drawContours(mask, [max_contour], -1, 255, thickness=cv2.FILLED)
-    # # --- 儲存第一步：最大區域遮罩 ---
-    # cv2.imwrite('debug_step1_mask.png', mask)
-    
-    # # 4. 2次侵蝕 + 1次膨脹
-    # kernel = np.ones((5, 5), np.uint8)
-    # eroded = cv2.erode(mask, kernel, iterations=2)  # 2次侵蝕
-    # refined_binary = cv2.dilate(eroded, kernel, iterations=1) # 1次膨脹
-    # # --- 儲存第二步：去雜訊後結果 ---
-    # cv2.imwrite('debug_step2_refined.png', refined_binary) 
-    
-    # # 5. 計算測量線
-    # white_pixels = np.where(refined_binary == 255)
-    # dist = 0
-    # res_img = image.copy()
-    
-    # if len(white_pixels[0]) > 0:
-    #     y, x = white_pixels[0], white_pixels[1]
-    #     left_pt = (x[np.argmin(x)], y[np.argmin(x)])
-    #     right_pt = (x[np.argmax(x)], y[np.argmax(x)])
-    #     dist = np.sqrt((right_pt[0]-left_pt[0])**2 + (right_pt[1]-left_pt[1])**2)
-        
-    #     # 在原圖畫線標註
-    #     cv2.line(res_img, left_pt, right_pt, (0, 255, 0), 3)
-    #     cv2.circle(res_img, left_pt, 8, (255, 0, 0), -1)
-    #     cv2.circle(res_img, right_pt, 8, (0, 0, 255), -1)
-        
-    #     # 在圖片右上角寫上像素距離
-    #     cv2.putText(res_img, f"{dist:.2f}px", (10, 30), 
-    #                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-    # # --- 儲存第三步：最終結果標註 ---
-    # cv2.imwrite('debug_step3_result.png', res_img)
-    
-    # print(f"✅ 影像處理完成，圖片已儲存至 debug_step1~3.png")
     return dist  #pixel
 
 @app.route('/height_v2', methods=['GET','POST'])  #取最大面積，跟腳踝平行的紙張寬度(去除膨脹、侵蝕)，改動detect_and_crop_both_feet_v2、texture_v2
@@ -1665,8 +1630,8 @@ def cal_height_v2():
             print("\n" + "=" * 50)
             print("步驟 3: 腳部距離測量")
             print("=" * 50)
-            paper_distance = texture_v2(result['right_foot_toe']) #pixel
-            pixel = 42 / paper_distance #(cm/pixel) 
+            paper_distance = texture_v2(result['left_foot_toe']) #pixel
+            pixel = 38.5 / paper_distance #(cm/pixel) 
             height_2 = pixel * height_pixels
             hand = pixel * hand_distance
             print("\n" + "=" * 50)
@@ -1678,7 +1643,7 @@ def cal_height_v2():
           
             print(f"手指距離: {hand:.2f} cm")
             print(f"人高度: {height_2:.2f} cm")  
-            print(f"紙張距離: {42} cm")
+            print(f"紙張距離: {38.5} cm")
             return jsonify({
                 "message": "success",
                 "height": f"{height_2:.1f}",
