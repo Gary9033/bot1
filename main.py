@@ -1466,7 +1466,7 @@ def detect_and_crop_both_feet_v2(file_path, padding_ratio=None, save_output=True
     feet_width_ratio = feet_width / w
     
     if padding_ratio is None:
-        padding_ratio = feet_width_ratio + 0.03  # 預設在腳距比例基礎上增加 5% 的 padding
+        padding_ratio = feet_width_ratio + 0.02  # 預設在腳距比例基礎上增加 5% 的 padding
     
     padding = int(w * padding_ratio)
     
@@ -1499,10 +1499,9 @@ def detect_and_crop_both_feet_v2(file_path, padding_ratio=None, save_output=True
     cv2.circle(img_bgr, right_heel_px, 3, (0, 255, 255), -1)
     cv2.circle(img_bgr, left_ankle_px, 3, (0, 255, 0), -1)
     cv2.circle(img_bgr, right_ankle_px, 3, (0, 255, 0), -1)
-    right_foot_crop_x = right_foot_px[0] - min_x
+  
     right_foot_crop_y = right_foot_px[1] - min_y
-    left_foot_crop_x = left_foot_px[0] - min_x
-    left_foot_crop_y = left_foot_px[1] - min_y
+    right_heel_crop_y = right_heel_px[1]-min_y
     feet_crop = img_bgr[min_y:max_y, min_x:max_x]
     
     if save_output:
@@ -1512,7 +1511,7 @@ def detect_and_crop_both_feet_v2(file_path, padding_ratio=None, save_output=True
     
     result = {
         'right_foot_toe': right_foot_crop_y,
-        'left_foot_toe': left_foot_crop_y,
+        'right_heel': right_heel_crop_y,
         'feet_width': feet_width,
         'feet_width_ratio': feet_width_ratio,
         'padding_used': padding
@@ -1520,15 +1519,13 @@ def detect_and_crop_both_feet_v2(file_path, padding_ratio=None, save_output=True
     
     return result
 
-def texture_v2(right_foot, crop_image_path='both_feet_crop.png'): 
+def texture_v2(right_heel, right_foot,crop_image_path='both_feet_crop.png'): 
     """測量紙張距離並儲存各階段處理結果"""
     print("❗是沒有膨脹和侵蝕的版本")
     image = cv2.imread(crop_image_path)
     if image is None: 
         print("❌ 找不到裁切圖片")
         return 0
-
-    right_foot_y = right_foot
     # 1. 轉灰階
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
@@ -1542,13 +1539,13 @@ def texture_v2(right_foot, crop_image_path='both_feet_crop.png'):
         # 即使失敗也存一張二值化圖，方便 debug 為什麼找不到
         cv2.imwrite('debug_step1_binary_fail.png', binary)
         return 0
-    
+    foot_y = int((0.8*right_foot + 0.2*right_heel))
     # 🔧 3. 在 right_foot_y 這一行的 X方向找黑色連續長度
-    row = binary[right_foot_y, :]  # 取出這一整行的像素（1D array）
+    row = binary[foot_y, :]  # 取出這一整行的像素（1D array）
     black_indices = np.where(row == 0)[0]  # 找所有黑色像素的X座標
     
     if len(black_indices) == 0:
-        print(f"❌ Y={right_foot_y} 這行沒有黑色像素")
+        print(f"❌ Y={foot_y} 這行沒有黑色像素")
         return 0
     
     # 找連續黑色區段（假設只有一個主要紙張）
@@ -1556,14 +1553,14 @@ def texture_v2(right_foot, crop_image_path='both_feet_crop.png'):
     right_x = np.max(black_indices)
     paper_width = right_x - left_x + 1  # 包含左右端點
     
-    print(f"📏 Y={right_foot_y} 行黑色連續長度: {paper_width} 像素")
+    print(f"📏 Y={foot_y} 行黑色連續長度: {paper_width} 像素")
     print(f"   範圍: X={left_x} 到 X={right_x}")
     
     # 可視化：在原圖標註
     debug_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    cv2.line(debug_img, (left_x, right_foot_y), (right_x, right_foot_y), (0, 255, 0), 3)
-    cv2.circle(debug_img, (left_x, right_foot_y), 3, (0, 0, 255), -1)
-    cv2.circle(debug_img, (right_x, right_foot_y), 3, (255, 0, 0), -1)
+    cv2.line(debug_img, (left_x, foot_y), (right_x, foot_y), (0, 255, 0), 3)
+    cv2.circle(debug_img, (left_x,foot_y), 3, (0, 0, 255), -1)
+    cv2.circle(debug_img, (right_x, foot_y), 3, (255, 0, 0), -1)
     cv2.putText(debug_img, f"Width: {paper_width}px", (10, 30), 
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     
@@ -1630,7 +1627,7 @@ def cal_height_v2():
             print("\n" + "=" * 50)
             print("步驟 3: 腳部距離測量")
             print("=" * 50)
-            paper_distance = texture_v2(result['left_foot_toe']) #pixel
+            paper_distance = texture_v2(result['right_heel'],result['right_foot_toe']) #pixel
             pixel = 38.5 / paper_distance #(cm/pixel) 
             height_2 = pixel * height_pixels
             hand = pixel * hand_distance
