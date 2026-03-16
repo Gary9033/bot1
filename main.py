@@ -1466,7 +1466,7 @@ def detect_and_crop_both_feet_v2(file_path, padding_ratio=None, save_output=True
     feet_width_ratio = feet_width / w
     
     if padding_ratio is None:
-        padding_ratio = feet_width_ratio + 0.02  # 預設在腳距比例基礎上增加 5% 的 padding
+        padding_ratio = feet_width_ratio + 0.03  # 預設在腳距比例基礎上增加 5% 的 padding
     
     padding = int(w * padding_ratio)
     
