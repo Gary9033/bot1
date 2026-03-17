@@ -1,3 +1,4 @@
+from PIL.ImageChops import overlay
 from flask import Flask, request, jsonify, send_file, send_from_directory
 from PIL import Image, ImageDraw
 import base64, os, cv2, numpy as np, uuid
@@ -1077,6 +1078,7 @@ def mediapipe_detect(file_path):
     img_array = img_rgb
 
     height_pixels = 0
+    out_path = os.path.splitext(file_path)[0] + "_overlay.png"
     if detection_result.segmentation_masks:
         mask = detection_result.segmentation_masks[0].numpy_view()
 
@@ -1100,21 +1102,12 @@ def mediapipe_detect(file_path):
         color_mask = np.zeros_like(img_array, dtype=np.uint8)
         color_mask[mask_2d > 0.5] = (0, 0, 255)
         alpha = 0.5
-        overlay = cv2.addWeighted(img_array, 1.0, color_mask, alpha, 0)
+        overlay_img = cv2.addWeighted(img_array, 1.0, color_mask, alpha, 0)
 
-        h, w, _ = overlay.shape
+        h, w, _ = overlay_img.shape
         center_x = w // 2
-        cv2.circle(overlay, (center_x, top_y), 8, (0, 255, 255), -1)
-        cv2.circle(overlay, (center_x, bottom_y), 8, (0, 255, 255), -1)
-
-        text1 = f"Height: {height_pixels}px"
-        cv2.putText(overlay, text1, (20, 40),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
-
-        out_path = os.path.splitext(file_path)[0] + "_overlay.png"
-        cv2.imwrite(out_path, cv2.cvtColor(overlay, cv2.COLOR_RGB2BGR))
-        print(f"✅ 覆蓋圖已儲存: {out_path}")
-
+        cv2.circle(overlay_img, (center_x, top_y), 8, (0, 255, 255), -1)
+        cv2.circle(overlay_img, (center_x, bottom_y), 8, (0, 255, 255), -1)
     annotated_image, all_landmark_pixels = draw_selected_landmarks(img_array, detection_result)
     
     landmarks_path = os.path.splitext(file_path)[0] + "_landmarks.png"
@@ -1140,7 +1133,7 @@ def mediapipe_detect(file_path):
     else:
         print("⚠️ 未偵測到左右食指")
 
-    return hand_distance, height_pixels
+    return hand_distance, height_pixels,overlay_img, out_path
 
 def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
     """
@@ -1363,7 +1356,7 @@ def cal_height():
     print("=" * 50)
     print("步驟 1: MediaPipe 姿勢偵測")
     print("=" * 50)
-    hand_distance, height_pixels = mediapipe_detect(image_path)
+    hand_distance, height_pixels, overlay_img, out_path = mediapipe_detect(image_path)
     
     if hand_distance is not None:
         print("\n" + "=" * 50)
@@ -1389,7 +1382,7 @@ def cal_height():
             print(f"身體高度: {height_pixels} 像素")
             pixel = 42 / feet_distance #(cm/pixel) 
             height = pixel * height_pixels
-            hand = pixel * hand_distance
+            hand = pixel * hand_distance     
             print(f"紙張距離: {feet_distance:.2f} 像素")
             print(f"左右腳關節點距離: {result['feet_width']} 像素")
             print(f"腳距佔圖片寬度比: {result['feet_width_ratio']*100:.2f}%")
@@ -1610,7 +1603,7 @@ def cal_height_v2():
     print("=" * 50)
     print("步驟 1: MediaPipe 姿勢偵測")
     print("=" * 50)
-    hand_distance, height_pixels = mediapipe_detect(image_path)
+    hand_distance, height_pixels, overlay_img, out_path = mediapipe_detect(image_path)
     
     if hand_distance is not None:
         print("\n" + "=" * 50)
@@ -1631,6 +1624,13 @@ def cal_height_v2():
             pixel = 38.5 / paper_distance #(cm/pixel) 
             height_2 = pixel * height_pixels
             hand = pixel * hand_distance
+           
+            text1 = f"Height: {height_2:.1f} cm, Hand: {hand:.1f} cm"
+            cv2.putText(overlay_img, text1, (20, 40),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+            cv2.imwrite(out_path, cv2.cvtColor(overlay_img, cv2.COLOR_RGB2BGR))
+
+            print(f"✅ 覆蓋圖已儲存: {out_path}")
             print("\n" + "=" * 50)
             print("最終結果")
             print("=" * 50)
