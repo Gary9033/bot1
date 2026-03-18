@@ -1241,6 +1241,7 @@ def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
     cv2.circle(img_bgr, right_heel_px, 5, (0, 255, 255), -1)
     cv2.circle(img_bgr, left_ankle_px, 5, (0, 255, 0), -1)
     cv2.circle(img_bgr, right_ankle_px, 5, (0, 255, 0), -1)
+
   
     right_foot_crop_y = right_foot_px[1] - min_y
     right_heel_crop_y = right_heel_px[1]-min_y
@@ -1274,6 +1275,7 @@ def texture(right_heel, right_foot, crop_image_path='both_feet_crop.png'):
     # 2. 二值化
     _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)  ##default 150
     cv2.imwrite('debug_step1_binary_fail.png', binary)
+
     # 3. 尋找並篩選最大輪廓 (只保留最大的白色區塊)
     contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
@@ -1282,11 +1284,18 @@ def texture(right_heel, right_foot, crop_image_path='both_feet_crop.png'):
         cv2.imwrite('debug_step1_binary_fail.png', binary)
         return 0
     
-    max_contour = max(contours, key=cv2.contourArea)
+    min_area = 500
+    large_contours = [c for c in contours if cv2.contourArea(c) >= min_area]
+    if not large_contours:
+        print("❌ 過濾後找不到夠大的輪廓")
+        cv2.imwrite('debug_step1_binary_fail.png', binary)
+        return 0
+
     mask = np.zeros_like(binary)
-    cv2.drawContours(mask, [max_contour], -1, 255, thickness=cv2.FILLED)
+    cv2.drawContours(mask, large_contours, -1, 255, thickness=cv2.FILLED)
     # --- 儲存第一步：最大區域遮罩 ---
     cv2.imwrite('debug_step1_mask.png', mask)
+
     
     # 4. 2次侵蝕 + 1次膨脹
     kernel = np.ones((5, 5), np.uint8)
