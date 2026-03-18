@@ -236,7 +236,7 @@ def questionnaire(data):
             case '1':                
                 questionnaire_type = "認知功能問卷"
                 print(questionnaire_type)     
-                exclude_keys = {"start_timestamp", "user", "machine_ID_1", "Questionnaire_type"}
+                exclude_keys = {"start_timestamp", "user", "id_num", "machine_ID_1", "Questionnaire_type"}
                 for key, value in data.items():
                     if key in exclude_keys:
                         continue            
@@ -257,7 +257,7 @@ def questionnaire(data):
             case '2':
                 questionnaire_type = "視力健康問卷"
                 print(questionnaire_type)                
-                exclude_keys = {"start_timestamp", "user", "machine_ID_1", "Questionnaire_type"}
+                exclude_keys = {"start_timestamp", "user", "id_num","machine_ID_1", "Questionnaire_type"}
                 for key, value in data.items():
                     if key in exclude_keys:
                         continue            
@@ -291,7 +291,7 @@ def questionnaire(data):
                     "no_hope": {"1": 1, "2": 0},
                     "envy_others": {"1": 1, "2": 0}
                 }
-                exclude_keys = {"start_timestamp", "user", "machine_ID_1", "Questionnaire_type"}
+                exclude_keys = {"start_timestamp", "user", "id_num", "machine_ID_1", "Questionnaire_type"}
                 details={}
                 for key, value in data.items():
                     if key in exclude_keys:
@@ -325,7 +325,7 @@ def questionnaire(data):
                     "stress_health":  {"1": 0, "2": 2},
                     "mood_memory":  {"1": 1, "2": 2},
                 }
-                exclude_keys = {"start_timestamp", "user", "machine_ID_1", "Questionnaire_type"}
+                exclude_keys = {"start_timestamp", "user", "id_num", "machine_ID_1", "Questionnaire_type"}
                 details={}            
                 for key, value in data.items():
                     if key in exclude_keys:
@@ -364,7 +364,7 @@ def questionnaire(data):
             case '5':
                 questionnaire_type = "支持評估問卷"
                 print(questionnaire_type)
-                exclude_keys = {"start_timestamp", "user", "machine_ID_1", "Questionnaire_type"}
+                exclude_keys = {"start_timestamp", "user", "id_num", "machine_ID_1", "Questionnaire_type"}
                 for key, value in data.items():
                     if key in exclude_keys:
                         continue            
@@ -381,7 +381,7 @@ def questionnaire(data):
                     
             case '6':
                 questionnaire_type = "視力"
-                exclude_keys = {"start_timestamp", "user", "machine_ID_1", "Questionnaire_type"}
+                exclude_keys = {"start_timestamp", "user", "id_num", "machine_ID_1", "Questionnaire_type"}
                 scores = {}
                 scores['near_distance'] = 1 if data['near_distance'] == "通過" else 0
                 scores['far_distance'] = 1 if data['far_distance'] == "通過" else 0
@@ -398,7 +398,7 @@ def questionnaire(data):
 
             case '7':
                 questionnaire_type = "行動"
-                exclude_keys = {"start_timestamp", "user", "machine_ID_1", "Questionnaire_type","mobility_start_time","mobility_end_time"}
+                # exclude_keys = {"start_timestamp", "user", "id_num", "machine_ID_1", "Questionnaire_type","mobility_start_time","mobility_end_time"}
                 
                 time_diff = int(data["mobility_end_time"]) - int(data["mobility_start_time"])
                 time_diff = time_diff / 1000.0  # 毫秒轉秒
@@ -673,6 +673,10 @@ def home():
                 return jsonify({"error": "Invalid survey_type value"}), 400
         else:
             return jsonify({"error": "Invalid survey_type value"}), 400
+    elif 'face_temperature' in data:
+        print("轉溫度成int")
+        s = float(data.get('face_temperature'))
+        return jsonify({"temperature": s})
     else:
         return jsonify({"error": "Invalid request"}), 400
 
@@ -1002,7 +1006,7 @@ def show_image():
         img_resized = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
         os.makedirs("./result", exist_ok=True)
-        s = data.get('id_num', str(uuid.uuid4().hex))
+        s = data.get('id_num') or str(uuid.uuid4().hex)
         path = f"./result/{s}.png"
         img_resized.save(path)
 
