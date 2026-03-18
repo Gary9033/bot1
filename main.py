@@ -1235,12 +1235,12 @@ def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
     
     img_bgr = img_cv.copy()
 
-    cv2.circle(img_bgr, left_foot_px, 5, (255, 0, 255), -1)
-    cv2.circle(img_bgr, right_foot_px, 5, (255, 0, 255), -1) 
-    cv2.circle(img_bgr, left_heel_px, 5, (0, 255, 255), -1)
-    cv2.circle(img_bgr, right_heel_px, 5, (0, 255, 255), -1)
-    cv2.circle(img_bgr, left_ankle_px, 5, (0, 255, 0), -1)
-    cv2.circle(img_bgr, right_ankle_px, 5, (0, 255, 0), -1)
+    # cv2.circle(img_bgr, left_foot_px, 5, (255, 0, 255), -1)
+    # cv2.circle(img_bgr, right_foot_px, 5, (255, 0, 255), -1) 
+    # cv2.circle(img_bgr, left_heel_px, 5, (0, 255, 255), -1)
+    # cv2.circle(img_bgr, right_heel_px, 5, (0, 255, 255), -1)
+    # cv2.circle(img_bgr, left_ankle_px, 5, (0, 255, 0), -1)
+    # cv2.circle(img_bgr, right_ankle_px, 5, (0, 255, 0), -1)
 
   
     right_foot_crop_y = right_foot_px[1] - min_y
@@ -1273,7 +1273,7 @@ def texture(right_heel, right_foot, crop_image_path='both_feet_crop.png'):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     # 2. 二值化
-    _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)  ##default 150
+    _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)  ##default 150
     cv2.imwrite('debug_step1_binary_fail.png', binary)
 
     # 3. 尋找並篩選最大輪廓 (只保留最大的白色區塊)
@@ -1284,7 +1284,7 @@ def texture(right_heel, right_foot, crop_image_path='both_feet_crop.png'):
         cv2.imwrite('debug_step1_binary_fail.png', binary)
         return 0
     
-    min_area = 500
+    min_area = 50
     large_contours = [c for c in contours if cv2.contourArea(c) >= min_area]
     if not large_contours:
         print("❌ 過濾後找不到夠大的輪廓")
@@ -1298,22 +1298,22 @@ def texture(right_heel, right_foot, crop_image_path='both_feet_crop.png'):
 
     
     # 4. 2次侵蝕 + 1次膨脹
-    kernel = np.ones((5, 5), np.uint8)
-    eroded = cv2.erode(mask, kernel, iterations=2) 
-    refined_binary = cv2.dilate(eroded, kernel, iterations=1) 
-    # --- 儲存第二步：去雜訊後結果 ---
-    cv2.imwrite('debug_step2_refined.png', refined_binary)
+    # kernel = np.ones((2, 2), np.uint8)
+    # eroded = cv2.erode(mask, kernel, iterations=2) 
+    # refined_binary = cv2.dilate(eroded, kernel, iterations=1) 
+    # # --- 儲存第二步：去雜訊後結果 ---
+    # cv2.imwrite('debug_step2_refined.png', refined_binary)
     
     foot_y = int((0.8*right_foot + 0.2*right_heel))
-    row = refined_binary[foot_y, :]  # 取出這一整行的像素（1D array）
-    black_indices = np.where(row == 0)[0]  # 找所有黑色像素的X座標
+    row = mask[foot_y, :]  # 取出這一整行的像素（1D array）
+    white_indices = np.where(row == 255)[0]  # 找所有白色像素的X座標
     
-    if len(black_indices) == 0:
-        print(f"❌ Y={foot_y} 這行沒有黑色像素")
+    if len(white_indices) == 0:
+        print(f"❌ Y={foot_y} 這行沒有白色像素")
         return 0
     
-    left_x = np.min(black_indices)
-    right_x = np.max(black_indices)
+    left_x = np.min(white_indices)
+    right_x = np.max(white_indices)
     paper_width = right_x - left_x + 1  # 包含左右端點
     res_img = image.copy()
     # 在原圖畫線標註
