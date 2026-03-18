@@ -43,7 +43,10 @@ def media_pixel_to_height_new(h_px, f_mm=1.005988, pixel_size_um=1.12, Z_m=2.4):
     H = ((h_px * p * Z_m) / f) * 100 
     return H
 
+
+
 def draw_selected_landmarks(rgb_image, detection_result):
+    """繪製選定的關節點"""
     pose_landmarks_list = detection_result.pose_landmarks
     annotated_image = np.copy(rgb_image)
     selected_pixels = []
@@ -52,37 +55,73 @@ def draw_selected_landmarks(rgb_image, detection_result):
         h, w, _ = annotated_image.shape
         pixel_coords = []
 
-        # 遍歷每個關節
         for i, landmark in enumerate(pose_landmarks):
             name = POSE_LANDMARK_NAMES[i]
             if name in TARGET_LANDMARKS:
                 x_px = int(landmark.x * w)
                 y_px = int(landmark.y * h)
                 pixel_coords.append((name, x_px, y_px))
-                # 畫節點
-                cv2.circle(annotated_image, (x_px, y_px), 5, (0,255,255), -1)
+                cv2.circle(annotated_image, (x_px, y_px), 5, (0, 255, 255), -1)
 
         selected_pixels.append(pixel_coords)
 
-        # 畫連線（可選：只連肩膀到手、肩膀到臀部）
         connections = [
-            # ("LEFT_SHOULDER", "RIGHT_SHOULDER"),
-            # ("LEFT_SHOULDER", "LEFT_ELBOW"),
-            # ("LEFT_ELBOW", "LEFT_WRIST"),
-            # ("RIGHT_SHOULDER", "RIGHT_ELBOW"),
-            # ("RIGHT_ELBOW", "RIGHT_WRIST"),
-            # ("LEFT_SHOULDER", "LEFT_HIP"),
-            # ("RIGHT_SHOULDER", "RIGHT_HIP"),
-            # ("LEFT_HIP", "RIGHT_HIP"),
-            ("LEFT_INDEX", "RIGHT_INDEX") 
+            ("LEFT_INDEX", "RIGHT_INDEX")
         ]
         for start_name, end_name in connections:
-            start = next(((x,y) for n,x,y in pixel_coords if n==start_name), None)
-            end = next(((x,y) for n,x,y in pixel_coords if n==end_name), None)
+            start = next(((x, y) for n, x, y in pixel_coords if n == start_name), None)
+            end = next(((x, y) for n, x, y in pixel_coords if n == end_name), None)
             if start and end:
-                cv2.line(annotated_image, start, end, (255,255,0), 2)
+                cv2.line(annotated_image, start, end, (255, 255, 0), 2)
 
     return annotated_image, selected_pixels
+
+def draw_selected_landmarks(rgb_image, detection_result):
+    # 取得偵測到的姿勢節點列表
+    pose_landmarks_list = detection_result.pose_landmarks
+    annotated_image = np.copy(rgb_image)
+    h, w, _ = annotated_image.shape
+    selected_pixels_all_persons = []
+
+    if not pose_landmarks_list:
+        return annotated_image, []
+
+    for pose_landmarks in pose_landmarks_list:
+        pixel_coords = {} # 改用字典存儲，搜尋速度更快且代碼更簡潔
+
+        # 1. 遍歷並記錄目標關節座標
+        for i, landmark in enumerate(pose_landmarks):
+            name = POSE_LANDMARK_NAMES[i]
+            if name in TARGET_LANDMARKS:
+                x_px = int(landmark.x * w)
+                y_px = int(landmark.y * h)
+                pixel_coords[name] = (x_px, y_px)
+                
+                # 畫出節點 (黃色圓點)
+                cv2.circle(annotated_image, (x_px, y_px), 5, (0, 255, 255), -1)
+
+        # 2. 定義要連線的組合 (目前的設定是連接左右食指)
+        connections = [
+            ("LEFT_INDEX", "RIGHT_INDEX"),
+            # 如果需要其他連線，取消註解即可：
+            # ("LEFT_SHOULDER", "RIGHT_SHOULDER"),
+            # ("LEFT_SHOULDER", "LEFT_HIP"),
+        ]
+
+        # 3. 畫連線
+        for start_name, end_name in connections:
+            if start_name in pixel_coords and end_name in pixel_coords:
+                start_pt = pixel_coords[start_name]
+                end_pt = pixel_coords[end_name]
+                # 畫出連線 (青藍色線條)
+                cv2.line(annotated_image, start_pt, end_pt, (255, 255, 0), 2)
+
+        # 格式化輸出資料
+        formatted_coords = [(name, pos[0], pos[1]) for name, pos in pixel_coords.items()]
+        selected_pixels_all_persons.append(formatted_coords)
+
+    return annotated_image, selected_pixels_all_persons
+
 
 def mediapipe(file_path):
     base_options = python.BaseOptions(model_asset_path='pose_landmarker.task')
@@ -242,7 +281,7 @@ def questionnaire(data):
                     if key in exclude_keys:
                         continue            
                     value_str = str(value) # 確保 value 是字串，然後取第一個字元
-                    if value[0] == '1':
+                    if value_str[0] == '1':
                         summation += 1
                 print("總分:", summation)   
                 if  2 <= summation <= 8:
@@ -263,7 +302,7 @@ def questionnaire(data):
                     if key in exclude_keys:
                         continue            
                     value_str = str(value) # 確保 value 是字串，然後取第一個字元
-                    if value[0] == '1':
+                    if value_str[0] == '1':
                         summation += 1
                 print("總分:", summation)  
                 if  1 <= summation <= 2:
@@ -370,7 +409,7 @@ def questionnaire(data):
                     if key in exclude_keys:
                         continue            
                     value_str = str(value) # 確保 value 是字串，然後取第一個字元
-                    if value[0] == '1':
+                    if value_str[0] == '1':
                         summation += 1
                 print("總分:", summation)  
                 if  1 <= summation <= 6:
@@ -519,7 +558,7 @@ def home():
 
     if 'pic1' in data:
         # return height(data)
-        return cal_height_v2() #目前用方法3(紙張)
+        return cal_height() #目前用方法2(紙張+膨脹)
     if 'pic2' in data:
         return height_new(data)
     elif 'temp' in data:
@@ -876,7 +915,7 @@ def calculate_generic(score_value, rise_dict):
     elif len(values) > 2 and score_value >= values[1] and score_value < values[2]:
         key = keys[1]
     else:
-        key = keys[-2]
+        key = keys[-1]
 
     idx = keys.index(key)
     total = values[idx+1] - values[idx]
@@ -1014,39 +1053,6 @@ def show_image():
         return send_file(path, mimetype="image/png")
 
 
-
-
-def draw_selected_landmarks(rgb_image, detection_result):
-    """繪製選定的關節點"""
-    pose_landmarks_list = detection_result.pose_landmarks
-    annotated_image = np.copy(rgb_image)
-    selected_pixels = []
-
-    for idx, pose_landmarks in enumerate(pose_landmarks_list):
-        h, w, _ = annotated_image.shape
-        pixel_coords = []
-
-        for i, landmark in enumerate(pose_landmarks):
-            name = POSE_LANDMARK_NAMES[i]
-            if name in TARGET_LANDMARKS:
-                x_px = int(landmark.x * w)
-                y_px = int(landmark.y * h)
-                pixel_coords.append((name, x_px, y_px))
-                cv2.circle(annotated_image, (x_px, y_px), 5, (0, 255, 255), -1)
-
-        selected_pixels.append(pixel_coords)
-
-        connections = [
-            ("LEFT_INDEX", "RIGHT_INDEX")
-        ]
-        for start_name, end_name in connections:
-            start = next(((x, y) for n, x, y in pixel_coords if n == start_name), None)
-            end = next(((x, y) for n, x, y in pixel_coords if n == end_name), None)
-            if start and end:
-                cv2.line(annotated_image, start, end, (255, 255, 0), 2)
-
-    return annotated_image, selected_pixels
-
 def mediapipe_detect(file_path):
     """MediaPipe 姿勢偵測（保持圖片直立方向）"""
     
@@ -1139,6 +1145,7 @@ def mediapipe_detect(file_path):
 
     return hand_distance, height_pixels,overlay_img, out_path
 
+
 def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
     """
     偵測雙腳位置並裁切（padding 根據腳距佔圖片寬度的比例自動計算）
@@ -1197,7 +1204,7 @@ def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
     feet_min_x = min(x_coords)
     feet_max_x = max(x_coords)
     feet_width = feet_max_x - feet_min_x
-    
+   
     feet_width_ratio = feet_width / w
     
     if padding_ratio is None:
@@ -1227,14 +1234,16 @@ def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
     print(f"📐 裁切尺寸: {max_x - min_x} x {max_y - min_y} 像素")
     
     img_bgr = img_cv.copy()
-    
+
     cv2.circle(img_bgr, left_foot_px, 5, (255, 0, 255), -1)
-    cv2.circle(img_bgr, right_foot_px, 5, (255, 0, 255), -1)
+    cv2.circle(img_bgr, right_foot_px, 5, (255, 0, 255), -1) 
     cv2.circle(img_bgr, left_heel_px, 5, (0, 255, 255), -1)
     cv2.circle(img_bgr, right_heel_px, 5, (0, 255, 255), -1)
     cv2.circle(img_bgr, left_ankle_px, 5, (0, 255, 0), -1)
     cv2.circle(img_bgr, right_ankle_px, 5, (0, 255, 0), -1)
-    
+  
+    right_foot_crop_y = right_foot_px[1] - min_y
+    right_heel_crop_y = right_heel_px[1]-min_y
     feet_crop = img_bgr[min_y:max_y, min_x:max_x]
     
     if save_output:
@@ -1243,15 +1252,8 @@ def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
         print(f"✂️ 雙腳裁切圖已儲存: {crop_path}")
     
     result = {
-        'left_foot_toe': left_foot_px,
-        'left_foot_heel': left_heel_px,
-        'left_ankle': left_ankle_px,
-        'right_foot_toe': right_foot_px,
-        'right_foot_heel': right_heel_px,
-        'right_ankle': right_ankle_px,
-        'crop_region': (min_x, min_y, max_x, max_y),
-        'crop_size': (max_x - min_x, max_y - min_y),
-        'feet_crop': feet_crop,
+        'right_foot_toe': right_foot_crop_y,
+        'right_heel': right_heel_crop_y,
         'feet_width': feet_width,
         'feet_width_ratio': feet_width_ratio,
         'padding_used': padding
@@ -1259,7 +1261,7 @@ def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
     
     return result
 
-def texture(crop_image_path='both_feet_crop.png'):
+def texture(right_heel, right_foot, crop_image_path='both_feet_crop.png'): 
     """測量紙張距離並儲存各階段處理結果"""
     image = cv2.imread(crop_image_path)
     if image is None: 
@@ -1270,7 +1272,7 @@ def texture(crop_image_path='both_feet_crop.png'):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     # 2. 二值化
-    _, binary = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY)
+    _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)  ##default 150
     cv2.imwrite('debug_step1_binary_fail.png', binary)
     # 3. 尋找並篩選最大輪廓 (只保留最大的白色區塊)
     contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -1293,52 +1295,36 @@ def texture(crop_image_path='both_feet_crop.png'):
     # --- 儲存第二步：去雜訊後結果 ---
     cv2.imwrite('debug_step2_refined.png', refined_binary)
     
-    # 5. 計算測量線
-    white_pixels = np.where(refined_binary == 255)
-    dist = 0
-    res_img = image.copy()
+    foot_y = int((0.8*right_foot + 0.2*right_heel))
+    row = refined_binary[foot_y, :]  # 取出這一整行的像素（1D array）
+    black_indices = np.where(row == 0)[0]  # 找所有黑色像素的X座標
     
-    if len(white_pixels[0]) > 0:
-        y, x = white_pixels[0], white_pixels[1]
-        left_pt = (x[np.argmin(x)], y[np.argmin(x)])
-        right_pt = (x[np.argmax(x)], y[np.argmax(x)])
-        dist = np.sqrt((right_pt[0]-left_pt[0])**2 + (right_pt[1]-left_pt[1])**2)
-        
-        # 在原圖畫線標註
-        cv2.line(res_img, left_pt, right_pt, (0, 255, 0), 3)
-        cv2.circle(res_img, left_pt, 8, (255, 0, 0), -1)
-        cv2.circle(res_img, right_pt, 8, (0, 0, 255), -1)
-        
-        # 在圖片右上角寫上像素距離
-        cv2.putText(res_img, f"{dist:.2f}px", (10, 30), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    if len(black_indices) == 0:
+        print(f"❌ Y={foot_y} 這行沒有黑色像素")
+        return 0
+    
+    left_x = np.min(black_indices)
+    right_x = np.max(black_indices)
+    paper_width = right_x - left_x + 1  # 包含左右端點
+    res_img = image.copy()
+    # 在原圖畫線標註
+    cv2.line(res_img, (left_x, foot_y), (right_x, foot_y), (0, 255, 0), 3)
+    cv2.circle(res_img, (left_x,foot_y), 3, (0, 0, 255), -1)
+    cv2.circle(res_img, (right_x, foot_y), 3, (255, 0, 0), -1)
+    cv2.putText(res_img, f"Width: {paper_width}px", (10, 30), 
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
     # --- 儲存第三步：最終結果標註 ---
     cv2.imwrite('debug_step3_result.png', res_img)
     
     print(f"✅ 影像處理完成，圖片已儲存至 debug_step1~3.png")
-    return dist
+    return paper_width 
 
 @app.route('/height', methods=['GET','POST'])
 def cal_height():
     data = request.get_json(force=True)
     try:
         b64_str = data.get("pic1")
-        SAVE_FILE = "pic.json"  
-        if os.path.exists(SAVE_FILE):
-            with open(SAVE_FILE, "r", encoding="utf-8") as f:
-                try:
-                    all_data = json.load(f)
-                    if not isinstance(all_data, list):
-                        all_data = [all_data]  # 如果原本不是 list，就轉成 list
-                except json.JSONDecodeError:
-                    all_data = []
-        else:
-            all_data = []
-        all_data.append(data)
-        with open(SAVE_FILE, "w", encoding="utf-8") as f:
-            json.dump(all_data, f, ensure_ascii=False, indent=4)
-
         if not b64_str:
             return jsonify({"error": "pic1 not found"}), 400
 
@@ -1370,32 +1356,35 @@ def cal_height():
         # 🔧 方式 1：自動使用腳距佔圖片寬度的比例（預設）
         result = detect_and_crop_both_feet(image_path, padding_ratio=None, save_output=True)
         
-        # 🔧 方式 2：手動指定 padding = 圖片寬度的 10%
-        # result = detect_and_crop_both_feet(file_path, padding_ratio=0.1, save_output=True)
-        
+         
         if result:
             print("\n" + "=" * 50)
             print("步驟 3: 腳部距離測量")
             print("=" * 50)
-            feet_distance = texture()
-            
+            paper_distance = texture(result['right_heel'],result['right_foot_toe']) #pixel
+            pixel = 38.5 / paper_distance #(cm/pixel) 
+            height_2 = pixel * height_pixels
+            hand = pixel * hand_distance
+           
+            text1 = f"Height: {height_2:.1f} cm, Hand: {hand:.1f} cm"
+            cv2.putText(overlay_img, text1, (20, 40),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+            cv2.imwrite(out_path, cv2.cvtColor(overlay_img, cv2.COLOR_RGB2BGR))
+
+            print(f"✅ 覆蓋圖已儲存: {out_path}")
             print("\n" + "=" * 50)
             print("最終結果")
             print("=" * 50)
             print(f"手指距離: {hand_distance} 像素")
             print(f"身體高度: {height_pixels} 像素")
-            pixel = 42 / feet_distance #(cm/pixel) 
-            height = pixel * height_pixels
-            hand = pixel * hand_distance     
-            print(f"紙張距離: {feet_distance:.2f} 像素")
-            print(f"左右腳關節點距離: {result['feet_width']} 像素")
-            print(f"腳距佔圖片寬度比: {result['feet_width_ratio']*100:.2f}%")
-            print(f"使用的 padding: {result['padding_used']} 像素")
-            print(f"人高度: {height:.2f} cm")
-            print(f"手指長度: {hand:.2f} cm")
+            print(f"紙張距離: {paper_distance:.2f} 像素")
+          
+            print(f"手指距離: {hand:.2f} cm")
+            print(f"人高度: {height_2:.2f} cm")  
+            print(f"紙張距離: {38.5} cm")
             return jsonify({
                 "message": "success",
-                "height": f"{height:.1f}",
+                "height": f"{height_2:.1f}",
                 "hand_length": f"{hand:.1f}",
             })
 
@@ -1458,7 +1447,6 @@ def detect_and_crop_both_feet_v2(file_path, padding_ratio=None, save_output=True
     feet_min_x = min(x_coords)
     feet_max_x = max(x_coords)
     feet_width = feet_max_x - feet_min_x
-    foot_points[4][1]
     
     feet_width_ratio = feet_width / w
     
@@ -1571,21 +1559,6 @@ def cal_height_v2():
     data = request.get_json(force=True)
     try:
         b64_str = data.get("pic1")
-        SAVE_FILE = "pic.json"  
-        if os.path.exists(SAVE_FILE):
-            with open(SAVE_FILE, "r", encoding="utf-8") as f:
-                try:
-                    all_data = json.load(f)
-                    if not isinstance(all_data, list):
-                        all_data = [all_data]  # 如果原本不是 list，就轉成 list
-                except json.JSONDecodeError:
-                    all_data = []
-        else:
-            all_data = []
-        all_data.append(data)
-        with open(SAVE_FILE, "w", encoding="utf-8") as f:
-            json.dump(all_data, f, ensure_ascii=False, indent=4)
-
         if not b64_str:
             return jsonify({"error": "pic1 not found"}), 400
 
