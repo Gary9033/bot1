@@ -1273,7 +1273,7 @@ def texture(right_heel, right_foot, crop_image_path='both_feet_crop.png'):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     # 2. 二值化
-    _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)  ##default 150
+    _, binary = cv2.threshold(gray, 80, 255, cv2.THRESH_BINARY_INV)  ##default 150
     cv2.imwrite('debug_step1_binary_fail.png', binary)
 
     # 3. 尋找並篩選最大輪廓 (只保留最大的白色區塊)
