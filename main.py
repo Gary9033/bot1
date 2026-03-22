@@ -1287,17 +1287,19 @@ def texture(feet_width, right_heel_y, right_foot_toe_y, crop_image_path='both_fe
     )
     threshold_methods.append(("otsu", int(otsu_th), otsu_binary))
 
-    for th in [40, 60, 80, 100, 120]:
+    for th in [40, 60, 80, 100, 120, 140, 160, 180, 200, 220]: 
         _, binary = cv2.threshold(gray, th, 255, cv2.THRESH_BINARY_INV)
         threshold_methods.append((f"manual_{th}", th, binary))
 
+    blurred = cv2.GaussianBlur(gray, (31, 31), 0)
+    approx_th = int(np.clip(blurred.astype(np.int16) - 10, 0, 255).mean())
     adaptive_binary = cv2.adaptiveThreshold(
         gray, 255,
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
         cv2.THRESH_BINARY_INV,
         31, 10
     )
-    threshold_methods.append(("adaptive", -1, adaptive_binary))
+    threshold_methods.append(("adaptive", approx_th, adaptive_binary))
 
     for method_name, th_value, binary in threshold_methods:
         contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
