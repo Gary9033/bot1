@@ -1201,16 +1201,13 @@ def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
     x_coords = [pt[0] for pt in foot_points]
     y_coords = [pt[1] for pt in foot_points]
     
-    feet_min_x = min(x_coords)
-    feet_max_x = max(x_coords)
-    feet_width = feet_max_x - feet_min_x
-   
+    feet_width = max(x_coords) - min(x_coords)   
     feet_width_ratio = feet_width / w
     
     if padding_ratio is None:
-        padding_ratio = feet_width_ratio + 0.03  # 預設在腳距比例基礎上增加 5% 的 padding
+        padding_ratio = feet_width_ratio + 0.03  
     
-    padding = int(w * padding_ratio)
+    padding = int(w * padding_ratio)  #原本的圖寬度乘上腳距離在這整張圖的比例
     
     print(f"📏 左右腳距離: {feet_width} 像素")
     print(f"📐 圖片寬度: {w} 像素")
@@ -1218,6 +1215,7 @@ def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
     print(f"🔧 padding_ratio: {padding_ratio*100:.2f}%")
     print(f"✂️ 計算出的 padding: {padding} 像素 (圖片寬度的 {padding_ratio*100:.2f}%)")
     
+    # 偵測切的距離是不是超過腳關節點的位置了?
     min_x = max(0, min(x_coords) - padding)
     max_x = min(w, max(x_coords) + padding)
     min_y = max(0, min(y_coords) - padding)
@@ -1233,101 +1231,239 @@ def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
     print(f"📦 雙腳裁切區域: ({min_x}, {min_y}) 到 ({max_x}, {max_y})")
     print(f"📐 裁切尺寸: {max_x - min_x} x {max_y - min_y} 像素")
     
-    img_bgr = img_cv.copy()
+    feet_crop_clean = img_cv[min_y:max_y, min_x:max_x].copy()
 
-    # cv2.circle(img_bgr, left_foot_px, 5, (255, 0, 255), -1)
-    # cv2.circle(img_bgr, right_foot_px, 5, (255, 0, 255), -1) 
-    # cv2.circle(img_bgr, left_heel_px, 5, (0, 255, 255), -1)
-    # cv2.circle(img_bgr, right_heel_px, 5, (0, 255, 255), -1)
-    # cv2.circle(img_bgr, left_ankle_px, 5, (0, 255, 0), -1)
-    # cv2.circle(img_bgr, right_ankle_px, 5, (0, 255, 0), -1)
-
-  
-    right_foot_crop_y = right_foot_px[1] - min_y
-    right_heel_crop_y = right_heel_px[1]-min_y
-    feet_crop = img_bgr[min_y:max_y, min_x:max_x]
-    
     if save_output:
         crop_path = "both_feet_crop.png"
-        cv2.imwrite(crop_path, feet_crop)
+        cv2.imwrite(crop_path, feet_crop_clean)
         print(f"✂️ 雙腳裁切圖已儲存: {crop_path}")
+    img_marked = img_cv.copy()
+    cv2.circle(img_marked, left_foot_px, 5, (255, 0, 255), -1)
+    cv2.circle(img_marked, right_foot_px, 5, (255, 0, 255), -1) 
+    cv2.circle(img_marked, left_heel_px, 5, (0, 255, 255), -1)
+    cv2.circle(img_marked, right_heel_px, 5, (0, 255, 255), -1)
+    cv2.circle(img_marked, left_ankle_px, 5, (0, 255, 0), -1)
+    cv2.circle(img_marked, right_ankle_px, 5, (0, 255, 0), -1)
+
+    right_foot_crop_y = right_foot_px[1] - min_y
+    right_heel_crop_y = right_heel_px[1]-min_y
+    
+    if save_output:
+        crop_path = "circle_both_feet_crop.png"
+        feet_crop_marked = img_marked[min_y:max_y, min_x:max_x]
+        cv2.imwrite(crop_path, feet_crop_marked)
+        print(f"✂️ 上circle的雙腳裁切圖已儲存: {crop_path}")
     
     result = {
-        'right_foot_toe': right_foot_crop_y,
-        'right_heel': right_heel_crop_y,
-        'feet_width': feet_width,
+        'right_foot_toe_y': right_foot_crop_y,
+        'right_heel_y': right_heel_crop_y,
+        'feet_width': feet_width,   ## 設定方程式1(紙張大小必大於腳寬度)
         'feet_width_ratio': feet_width_ratio,
         'padding_used': padding
     }
     
     return result
 
-def texture(right_heel, right_foot, crop_image_path='both_feet_crop.png'): 
+
+def texture(feet_width, right_heel_y, right_foot_toe_y, crop_image_path='both_feet_crop.png'):   ##gpt(利用三種門檻的定義方法(otsu+manual+adaptive))，利用評分機制去找最好的結果
     """測量紙張距離並儲存各階段處理結果"""
     image = cv2.imread(crop_image_path)
-    if image is None: 
+    if image is None:
         print("❌ 找不到裁切圖片")
         return 0
-    
-    # 1. 轉灰階
+
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    
-    # 2. 二值化
-    _, binary = cv2.threshold(gray, 80, 255, cv2.THRESH_BINARY_INV)  ##default 150
-    cv2.imwrite('debug_step1_binary_fail.png', binary)
+    h, w = gray.shape
 
-    # 3. 尋找並篩選最大輪廓 (只保留最大的白色區塊)
-    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if not contours:
-        print("❌ 找不到白色參考物")
-        # 即使失敗也存一張二值化圖，方便 debug 為什麼找不到
-        cv2.imwrite('debug_step1_binary_fail.png', binary)
-        return 0
-    
-    min_area = 50
-    large_contours = [c for c in contours if cv2.contourArea(c) >= min_area]
-    if not large_contours:
-        print("❌ 過濾後找不到夠大的輪廓")
-        cv2.imwrite('debug_step1_binary_fail.png', binary)
+    foot_y = int(0.8 * right_foot_toe_y + 0.2 * right_heel_y)
+    foot_y = max(0, min(h - 1, foot_y))
+
+    candidates = []
+
+    threshold_methods = []
+
+    otsu_th, otsu_binary = cv2.threshold(
+        gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU
+    )
+    threshold_methods.append(("otsu", int(otsu_th), otsu_binary))
+
+    for th in [40, 60, 80, 100, 120]:
+        _, binary = cv2.threshold(gray, th, 255, cv2.THRESH_BINARY_INV)
+        threshold_methods.append((f"manual_{th}", th, binary))
+
+    adaptive_binary = cv2.adaptiveThreshold(
+        gray, 255,
+        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv2.THRESH_BINARY_INV,
+        31, 10
+    )
+    threshold_methods.append(("adaptive", -1, adaptive_binary))
+
+    for method_name, th_value, binary in threshold_methods:
+        contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if not contours:
+            continue
+
+        min_area = 50
+        large_contours = [c for c in contours if cv2.contourArea(c) >= min_area]
+        if not large_contours:
+            continue
+
+        mask = np.zeros_like(binary)
+        cv2.drawContours(mask, large_contours, -1, 255, thickness=cv2.FILLED)
+
+        row = mask[foot_y, :]
+        white_indices = np.where(row == 255)[0]
+        if len(white_indices) == 0:
+            continue
+
+        left_x = int(np.min(white_indices))
+        right_x = int(np.max(white_indices))
+        paper_width = right_x - left_x + 1
+
+        width_ratio = paper_width / max(feet_width, 1)
+        center_x = (left_x + right_x) / 2
+        center_error = abs(center_x - (w / 2))
+
+        edge_penalty = 0
+        if left_x == 0:
+            edge_penalty += 1000
+        if right_x == w - 1:
+            edge_penalty += 1000
+
+        score = 100 * width_ratio - center_error - edge_penalty
+
+        candidates.append({
+            "method": method_name,
+            "threshold": th_value,
+            "score": score,
+            "paper_width": paper_width,
+            "left_x": left_x,
+            "right_x": right_x,
+            "mask": mask,
+            "binary": binary
+        })
+
+    if not candidates:
+        print("❌ 找不到有效的紙張候選")
         return 0
 
-    mask = np.zeros_like(binary)
-    cv2.drawContours(mask, large_contours, -1, 255, thickness=cv2.FILLED)
-    # --- 儲存第一步：最大區域遮罩 ---
-    cv2.imwrite('debug_step1_mask.png', mask)
+    best = max(candidates, key=lambda x: x["score"])
 
-    
-    # 4. 2次侵蝕 + 1次膨脹
-    # kernel = np.ones((2, 2), np.uint8)
-    # eroded = cv2.erode(mask, kernel, iterations=2) 
-    # refined_binary = cv2.dilate(eroded, kernel, iterations=1) 
-    # # --- 儲存第二步：去雜訊後結果 ---
-    # cv2.imwrite('debug_step2_refined.png', refined_binary)
-    
-    foot_y = int((0.8*right_foot + 0.2*right_heel))
-    row = mask[foot_y, :]  # 取出這一整行的像素（1D array）
-    white_indices = np.where(row == 255)[0]  # 找所有白色像素的X座標
-    
-    if len(white_indices) == 0:
-        print(f"❌ Y={foot_y} 這行沒有白色像素")
-        return 0
-    
-    left_x = np.min(white_indices)
-    right_x = np.max(white_indices)
-    paper_width = right_x - left_x + 1  # 包含左右端點
+    paper_width = best["paper_width"]
+    left_x = best["left_x"]
+    right_x = best["right_x"]
+    best_mask = best["mask"]
+    best_binary = best["binary"]
+
+    cv2.imwrite('debug_step1_binary_fail.png', best_binary)
+    cv2.imwrite('debug_step1_mask.png', best_mask)
+
     res_img = image.copy()
-    # 在原圖畫線標註
     cv2.line(res_img, (left_x, foot_y), (right_x, foot_y), (0, 255, 0), 3)
-    cv2.circle(res_img, (left_x,foot_y), 3, (0, 0, 255), -1)
+    cv2.circle(res_img, (left_x, foot_y), 3, (0, 0, 255), -1)
     cv2.circle(res_img, (right_x, foot_y), 3, (255, 0, 0), -1)
-    cv2.putText(res_img, f"Width: {paper_width}px", (10, 30), 
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-    # --- 儲存第三步：最終結果標註 ---
+    cv2.putText(
+        res_img,
+        f"{best['method']}",
+        (10, 30),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        (0, 255, 0),
+        2
+    )
     cv2.imwrite('debug_step3_result.png', res_img)
+
+    print(f"✅ 使用方法: {best['method']}, threshold={best['threshold']}")
+    print(f"✅ paper_width = {paper_width}px, score = {best['score']:.2f}")
+
+    return paper_width
+
+# def texture(feet_width, right_heel_y, right_foot_toe_y, crop_image_path='both_feet_crop.png'):   ## my 3 formula
+#     """測量紙張距離並儲存各階段處理結果"""
+#     image = cv2.imread(crop_image_path)
+#     if image is None: 
+#         print("❌ 找不到裁切圖片")
+#         return 0
     
-    print(f"✅ 影像處理完成，圖片已儲存至 debug_step1~3.png")
-    return paper_width 
+#     # 1. 轉灰階
+#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#     h, w = gray.shape
+
+#     loop_flag = True
+#     binary_threshold = 80
+#     while loop_flag and binary_threshold >= 0:
+#         # 2. 二值化
+#         _, binary = cv2.threshold(gray, binary_threshold, 255, cv2.THRESH_BINARY_INV)  ##default 150
+#         cv2.imwrite('debug_step1_binary_fail.png', binary)
+
+#         # 3. 尋找並篩選最大輪廓 (只保留最大的白色區塊)
+#         contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+#         if not contours:
+#             print("❌ 找不到白色參考物")
+#             # 即使失敗也存一張二值化圖，方便 debug 為什麼找不到
+#             cv2.imwrite('debug_step1_binary_fail.png', binary)
+#             return 0
+        
+#         min_area = 50
+#         large_contours = [c for c in contours if cv2.contourArea(c) >= min_area]
+#         if not large_contours:
+#             print("❌ 過濾後找不到夠大的輪廓")
+#             cv2.imwrite('debug_step1_binary_fail.png', binary)
+#             return 0
+
+#         mask = np.zeros_like(binary)
+#         cv2.drawContours(mask, large_contours, -1, 255, thickness=cv2.FILLED)
+#         # --- 儲存第一步：最大區域遮罩 ---
+#         cv2.imwrite('debug_step1_mask.png', mask)
+
+        
+#         # 4. 2次侵蝕 + 1次膨脹
+#         # kernel = np.ones((2, 2), np.uint8)
+#         # eroded = cv2.erode(mask, kernel, iterations=2) 
+#         # refined_binary = cv2.dilate(eroded, kernel, iterations=1) 
+#         # # --- 儲存第二步：去雜訊後結果 ---
+#         # cv2.imwrite('debug_step2_refined.png', refined_binary)
+        
+#         foot_y = int((0.8*right_foot_toe_y + 0.2*right_heel_y))
+
+#         """
+#         這會取出 foot_y 那一整排像素，然後找出所有白色像素的 x 座標。
+#         例如這一行可能是：
+#         [0,0,0,255,255,255,255,0,0]
+#         那 white_indices 就會是：
+#         [3,4,5,6]
+#         """
+#         row = mask[foot_y, :]  # 取出這一整行的像素（1D array）
+#         white_indices = np.where(row == 255)[0]  # 找所有白色像素的X座標
+#         if len(white_indices) == 0:
+#             print(f"❌ Y={foot_y} 這行沒有白色像素")
+#             return 0
+        
+#         left_x = np.min(white_indices)
+#         right_x = np.max(white_indices)
+#         paper_width = right_x - left_x + 1  # 包含左右端點
+
+#         if (paper_width > feet_width) and (right_x < w - 1) and (left_x > 0): #宣告勝利條件
+#             loop_flag = False
+#             print("目前門檻是"+str(binary_threshold))
+#         else:
+#             binary_threshold = binary_threshold -20
+#             loop_flag = True
+       
+#     res_img = image.copy()
+#     # 在原圖畫線標註
+#     cv2.line(res_img, (left_x, foot_y), (right_x, foot_y), (0, 255, 0), 3)
+#     cv2.circle(res_img, (left_x,foot_y), 3, (0, 0, 255), -1)
+#     cv2.circle(res_img, (right_x, foot_y), 3, (255, 0, 0), -1)
+#     cv2.putText(res_img, f"Width: {paper_width}px", (10, 30), 
+#                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+#     # --- 儲存第三步：最終結果標註 ---
+#     cv2.imwrite('debug_step3_result.png', res_img)
+    
+#     print(f"✅ 影像處理完成，圖片已儲存至 debug_step1~3.png")
+#     return paper_width 
 
 @app.route('/height', methods=['GET','POST'])
 def cal_height():
@@ -1370,7 +1506,7 @@ def cal_height():
             print("\n" + "=" * 50)
             print("步驟 3: 腳部距離測量")
             print("=" * 50)
-            paper_distance = texture(result['right_heel'],result['right_foot_toe']) #pixel
+            paper_distance = texture(result['feet_width'],result['right_heel_y'],result['right_foot_toe_y']) #pixel
             pixel = 38.5 / paper_distance #(cm/pixel) 
             height_2 = pixel * height_pixels
             hand = pixel * hand_distance
