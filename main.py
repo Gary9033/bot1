@@ -1287,7 +1287,7 @@ def texture(feet_width, right_heel_y, right_foot_toe_y, crop_image_path='both_fe
     )
     threshold_methods.append(("otsu", int(otsu_th), otsu_binary))
 
-    for th in [40, 60, 80, 100, 120, 140, 160, 180, 200, 220]: 
+    for th in [80, 100, 120, 140, 160]: 
         _, binary = cv2.threshold(gray, th, 255, cv2.THRESH_BINARY_INV)
         threshold_methods.append((f"manual_{th}", th, binary))
 
@@ -1314,26 +1314,46 @@ def texture(feet_width, right_heel_y, right_foot_toe_y, crop_image_path='both_fe
         mask = np.zeros_like(binary)
         cv2.drawContours(mask, large_contours, -1, 255, thickness=cv2.FILLED)
 
+        """
+        這會取出 foot_y 那一整排像素，然後找出所有白色像素的 x 座標。
+        例如這一行可能是：
+        [0,0,0,255,255,255,255,0,0]
+        那 white_indices 就會是：
+        [3,4,5,6]
+        """
         row = mask[foot_y, :]
-        white_indices = np.where(row == 255)[0]
-        if len(white_indices) == 0:
+        white_indices = np.where(row == 255)[0] ##因為反白所以現實中是兩側黑邊
+
+        
+        if len(white_indices) == 0 :
             continue
+         
+        gaps = np.where(np.diff(white_indices) > 25)[0]  # 容許 50px 以內的小斷點
+        num_segments = len(gaps)        
+        segment_penalty = 0
+        if num_segments == 0:
+            continue  # 完全沒有區段才真的跳過
+        elif num_segments > 1:
+            segment_penalty = 500 * num_segments  # 每多一段扣 500 分
+
 
         left_x = int(np.min(white_indices))
         right_x = int(np.max(white_indices))
         paper_width = right_x - left_x + 1
 
         width_ratio = paper_width / max(feet_width, 1)
+        if width_ratio > 3:  # 也不能太寬
+            continue
         center_x = (left_x + right_x) / 2
         center_error = abs(center_x - (w / 2))
 
         edge_penalty = 0
-        if left_x == 0:
+        if left_x < 5:
             edge_penalty += 1000
-        if right_x == w - 1:
+        if right_x > w - 6:
             edge_penalty += 1000
-
-        score = 100 * width_ratio - center_error - edge_penalty
+        
+        score = 100 * width_ratio - center_error - edge_penalty - segment_penalty
 
         candidates.append({
             "method": method_name,
@@ -1349,8 +1369,14 @@ def texture(feet_width, right_heel_y, right_foot_toe_y, crop_image_path='both_fe
     if not candidates:
         print("❌ 找不到有效的紙張候選")
         return 0
-
-    best = max(candidates, key=lambda x: x["score"])
+    top_2_candidates = sorted(candidates, key=lambda x: x["score"], reverse=True)
+    print(f"🏆 找到前 {len(top_2_candidates)} 個最佳候選：")
+    for i, cand in enumerate(top_2_candidates, start=1):
+        method = cand["method"]
+        thresh = cand["threshold"]
+        score = cand["score"]
+        print(f"第 {i} 名: [{method}] 門檻值: {thresh}, 分數: {score:.4f}")
+    best = top_2_candidates[0]
 
     paper_width = best["paper_width"]
     left_x = best["left_x"]
