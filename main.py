@@ -1259,13 +1259,14 @@ def detect_and_crop_both_feet(file_path, padding_ratio=None, save_output=True):
         'right_heel_y': right_heel_crop_y,
         'feet_width': feet_width,   ## 設定方程式1(紙張大小必大於腳寬度)
         'feet_width_ratio': feet_width_ratio,
-        'padding_used': padding
+        'padding_used': padding,
+        'pic_path': file_path
     }
     
     return result
 
 
-def texture(feet_width, right_heel_y, right_foot_toe_y, crop_image_path='both_feet_crop.png'):   ##全黑紙張用adaptive來抓長度
+def texture(feet_width, right_heel_y, right_foot_toe_y, file_path, crop_image_path='both_feet_crop.png'):   ##全黑紙張用adaptive來抓長度
     """測量紙張距離並儲存各階段處理結果"""
     image = cv2.imread(crop_image_path)
     if image is None:
@@ -1296,11 +1297,15 @@ def texture(feet_width, right_heel_y, right_foot_toe_y, crop_image_path='both_fe
         contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         if not contours:
             continue
-
-        min_area = 50
-        large_contours = [c for c in contours if cv2.contourArea(c) >= min_area]
-        if not large_contours:
-            continue
+        
+        large_contours = []
+        min_area = 10000
+        while not large_contours and min_area > 0:
+            min_area = min_area // 2
+            large_contours = [c for c in contours if cv2.contourArea(c) >= min_area]
+            if not large_contours:
+                print("降低area threshold" + str(min_area))
+                min_area //= 2
 
         mask = np.zeros_like(binary)
         cv2.drawContours(mask, large_contours, -1, 255, thickness=cv2.FILLED)
@@ -1338,7 +1343,7 @@ def texture(feet_width, right_heel_y, right_foot_toe_y, crop_image_path='both_fe
     best_mask = best["mask"]
     best_binary = best["binary"]
 
-    cv2.imwrite('debug_step1_binary.png', best_binary)
+    cv2.imwrite('debug_step1_binary.png', best_binary)    
     cv2.imwrite('debug_step1_mask.png', best_mask)
 
     res_img = image.copy()
@@ -1354,6 +1359,8 @@ def texture(feet_width, right_heel_y, right_foot_toe_y, crop_image_path='both_fe
         (0, 255, 0),
         2
     )
+    out_path = os.path.splitext(file_path)[0] + "debug_step3_result.png"
+    cv2.imwrite(out_path, res_img)
     cv2.imwrite('debug_step3_result.png', res_img)
 
     print(f"✅ 使用方法: {best['method']}, threshold={best['threshold']}")
@@ -1488,7 +1495,7 @@ def cal_height():
             print("\n" + "=" * 50)
             print("步驟 3: 腳部距離測量")
             print("=" * 50)
-            paper_distance = texture(result['feet_width'],result['right_heel_y'],result['right_foot_toe_y']) #pixel
+            paper_distance = texture(result['feet_width'],result['right_heel_y'],result['right_foot_toe_y'], result['pic_path']) #pixel
             real_paper = 42 #cm
             pixel = real_paper / paper_distance #(cm/pixel) 
             height_2 = pixel * height_pixels
