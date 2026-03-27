@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    container_name: flask-mediapipe-app
+    container_name: nuwabot
     ports:
       - "5000:5000"
     volumes:

@@ -5,6 +5,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     libgl1 \
+    libegl1 \
+    libgles2 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
@@ -18,8 +20,6 @@ ENV GLOG_minloglevel=2
 ENV CUDA_VISIBLE_DEVICES=-1
 
 COPY . .
-
-RUN mkdir -p uploads result
 
 EXPOSE 5000
 
