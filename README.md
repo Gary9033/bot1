@@ -54,6 +54,11 @@ cd bot1
 docker compose up --build -d
 ```
 
+```bash
+# 查看剛剛開啟的docker container 
+docker logs -f nuwabot
+```
+
 若要停止並移除容器，請執行：
 
 ```bash
