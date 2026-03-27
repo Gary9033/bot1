@@ -1,14 +1,18 @@
-from PIL.ImageChops import overlay
+import os
+os.environ["GLOG_minloglevel"] = "2"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
 from flask import Flask, request, jsonify, send_file, send_from_directory
 from PIL import Image, ImageDraw
 import base64, os, cv2, numpy as np, uuid
 import mediapipe as mp
 from mediapipe.tasks import python          
 from mediapipe.tasks.python import vision
-from mediapipe import solutions
-from mediapipe.python.solutions.drawing_utils import DrawingSpec
-from mediapipe.framework.formats import landmark_pb2
 import re,json,datetime
+import absl.logging
+absl.logging.set_verbosity(absl.logging.FATAL)
+absl.logging.set_stderrthreshold(absl.logging.FATAL)
+
 
 app = Flask(__name__)
 
