@@ -138,14 +138,14 @@ def mediapipe(file_path):
     # 載入圖片
     image = mp.Image.create_from_file(file_path)
     # image = mp.Image.create_from_file("image1.jpg")
-
+    threadshold = 0.8
     # 偵測輪廓
     detection_result = detector.detect(image)
     img_array = image.numpy_view()
     if detection_result.segmentation_masks:
         mask = detection_result.segmentation_masks[0].numpy_view()
         # 計算頭到腳的 pixel 高度
-        y_indices, x_indices = np.where(mask > 0.5)
+        y_indices, x_indices = np.where(mask > threadshold)
         if len(y_indices) > 0:
             top_y = np.min(y_indices)
             bottom_y = np.max(y_indices)
@@ -158,7 +158,7 @@ def mediapipe(file_path):
         # 用透明藍色疊加在原圖
         img_array = image.numpy_view()  # 原圖
         color_mask = np.zeros_like(img_array, dtype=np.uint8)
-        color_mask[mask > 0.5] = (0, 0, 255)  # 藍色
+        color_mask[mask > threadshold] = (0, 0, 255)  # 藍色
         alpha = 0.5
         overlay = cv2.addWeighted(img_array, 1.0, color_mask, alpha, 0)
         # 顯示或存檔
